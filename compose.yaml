@@ -1,0 +1,10 @@
+services:
+  vscode:
+    build: .
+    user: 500:100
+    ports:
+      - 2022:22
+    volumes:
+      - $HOME/Workspaces:/home/vscode/Workspaces:rw
+      - $HOME/.ssh/authorized_keys:/home/vscode/.ssh/authorized_keys:ro
+      - $HOME/.ssh/id_ed25519:/home/vscode/.ssh/id_ed25519:ro
