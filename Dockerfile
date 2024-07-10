@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 # VS Code remote requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -24,9 +24,9 @@ RUN apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Host/container user mapping
-ARG USERNAME=vscode
-ARG UID=500
-ARG GID=100
+ARG USERNAME=vscode     # FIXME
+ARG UID=500             # FIXME
+ARG GID=100             # FIXME
 
 RUN useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
 RUN echo '%users ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vscode

@@ -2,7 +2,7 @@ services:
   vscode:
     build: .
     restart: always
-    user: 500:100
+    user: 500:100     # FIXME
     ports:
       - 2022:22
     volumes:
