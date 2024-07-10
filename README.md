@@ -28,6 +28,9 @@ QTS is a busybox based Linux, so we can not install VS Code Server directly. How
 
 Copy `Dockerfile` and `compose.yaml` to QNAP.
 
+> [!NOTE]
+> If your UID on QTS is not 500, fix/update `FIXME` tag.
+
 Build and run the container.
 
 ```sh
@@ -55,7 +58,3 @@ Host vscode-on-qnap                # as you like
 
 - Open remote explorer
 - Open `vscode-on-qnap` alias host
-
-## Memo
-
-If your UID on QTS is not 500, fix/update `FIXME` tag.
