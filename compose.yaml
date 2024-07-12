@@ -1,12 +1,11 @@
 services:
-  vscode:
+  vscode-remote:
     build: .
+    image: vscode-remote
+    container_name: vscode-remote
     restart: always
-    user: 500:100     # FIXME
+    user: "${UID}:${GID}"
     ports:
       - 2022:22
     volumes:
-      - $HOME/Workspaces:/home/vscode/Workspaces:rw
-      - $HOME/.ssh/authorized_keys:/home/vscode/.ssh/authorized_keys:ro
-      - $HOME/.ssh/id_ed25519:/home/vscode/.ssh/id_ed25519:ro
-      - $HOME/.gitconfig:/home/vscode/.gitconfig:ro
+      - $HOME:/home/vscode:rw

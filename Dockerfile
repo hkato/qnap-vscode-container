@@ -1,9 +1,12 @@
-FROM ubuntu:24.04
+FROM golang:1.22.5 as builder
+
+RUN go install github.com/boxboat/fixuid@v0.6.0
+
+FROM node:lts
 
 # VS Code remote requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-server \
-    libatomic1 \
     sudo
 
 RUN mkdir /var/run/sshd
@@ -16,26 +19,25 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 # Development tools
 RUN apt-get install -y --no-install-recommends \
-    git \
     curl \
     vim-tiny \
     less \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Host/container user mapping
-ARG USERNAME=vscode     # FIXME
-ARG UID=500             # FIXME
-ARG GID=100             # FIXME
+COPY --from=builder /go/bin/fixuid /usr/local/bin
 
-RUN useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
-RUN echo '%users ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vscode
+RUN USER=vscode && \
+    GROUP=vscode && \
+    useradd -m -s /bin/bash $USER && \
+    chown root:root /usr/local/bin/fixuid && \
+    chmod 4755 /usr/local/bin/fixuid && \
+    mkdir -p /etc/fixuid && \
+    printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml && \
+    echo '%users ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vscode
 
-USER $USERNAME
-
-RUN mkdir /home/$USERNAME/.ssh
-RUN chmod 700 /home/$USERNAME/.ssh
+USER vscode:vscode
 
 # SSH daemon
 EXPOSE 22
-CMD ["sudo", "/usr/sbin/sshd", "-D"]
+CMD ["fixuid", "sudo", "/usr/sbin/sshd", "-D", "-e"]
