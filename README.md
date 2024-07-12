@@ -1,6 +1,6 @@
 # QNAP VS Code Remote Container
 
-Visual Studio Code Server on QNAP/QTS
+Visual Studio Code Remote on QNAP/QTS
 
 ![Overview](images/overview.png)
 
@@ -17,19 +17,19 @@ QTS is a busybox based Linux, so we can not install VS Code Server directly. How
 
 - [Container Station](https://www.qnap.com/en-us/how-to/faq/article/frequently-asked-questions-about-container-station)
 - [Enable SSH](https://www.qnap.com/en-us/how-to/faq/article/how-do-i-access-my-qnap-nas-using-ssh)
-- Create `~/Workspaces` directory (QNAP/Container shared volume)
-- Copy SSH public key (`~/.ssh/authorized_keys`)
-- For git+ssh access, create/copy SSH private key (`~/.ssh/id_ed25519`)
-- For git, create/copy config file (`~/.gitconfig`)
+- Add SSH public key (`~/.ssh/authorized_keys`)
 
 ## Install
 
 ### QNAP
 
-Copy `Dockerfile` and `compose.yaml` to QNAP.
+Copy `Dockerfile`, `compose.yaml`, `make_env.sh` to QNAP.
 
-> [!NOTE]
-> If your UID on QTS is not 500, fix/update `FIXME` tag.
+Create `.env` file.
+
+```sh
+[user@my-qnap-host somewhere]$ sh make_env.sh
+```
 
 Build and run the container.
 
