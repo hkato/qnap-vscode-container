@@ -3,6 +3,7 @@ services:
     build: .
     image: vscode-remote
     container_name: vscode-remote
+    hostname: remote
     restart: always
     user: "${UID}:${GID}"
     ports:
