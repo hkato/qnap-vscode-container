@@ -34,7 +34,7 @@ RUN USER=vscode && \
     chmod 4755 /usr/local/bin/fixuid && \
     mkdir -p /etc/fixuid && \
     printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml && \
-    echo '%users ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vscode
+    echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER
 
 USER vscode:vscode
 
