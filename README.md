@@ -1,6 +1,4 @@
-# QNAP VS Code Remote Container
-
-Visual Studio Code Remote on QNAP/QTS
+# VS Code Remote for QNAP (Arm32)
 
 ![Overview](images/overview.png)
 
