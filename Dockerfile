@@ -1,5 +1,7 @@
 FROM golang:1.22.5 as builder
 
+# fixuid - https://github.com/boxboat/fixuid
+# no 32-bit binaries
 RUN go install github.com/boxboat/fixuid@v0.6.0
 
 FROM node:lts
@@ -17,14 +19,7 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
-# Development tools
-RUN apt-get install -y --no-install-recommends \
-    curl \
-    vim-tiny \
-    less \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
+# fixuid
 COPY --from=builder /go/bin/fixuid /usr/local/bin
 
 RUN USER=vscode && \
@@ -35,6 +30,24 @@ RUN USER=vscode && \
     mkdir -p /etc/fixuid && \
     printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml && \
     echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER
+
+# Development tools
+#   - Docker outside of Docker
+#   - vim, less
+RUN install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    docker-ce-cli \
+    vim-tiny \
+    less \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+RUN chmod +s /usr/bin/docker
 
 USER vscode:vscode
 
