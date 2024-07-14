@@ -22,14 +22,12 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # fixuid
 COPY --from=builder /go/bin/fixuid /usr/local/bin
 
-RUN USER=vscode && \
-    GROUP=vscode && \
-    useradd -m -s /bin/bash $USER && \
-    chown root:root /usr/local/bin/fixuid && \
+RUN chown root:root /usr/local/bin/fixuid && \
     chmod 4755 /usr/local/bin/fixuid && \
     mkdir -p /etc/fixuid && \
-    printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml && \
-    echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER
+    printf "user: vscode\ngroup: users\n" > /etc/fixuid/config.yml && \
+    adduser --gid 100 --shell /bin/bash --disabled-password --gecos "" vscode && \
+    echo "vscode ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vscode
 
 # Development tools
 #   - Docker outside of Docker
@@ -43,6 +41,7 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN apt-get update && apt-get install -y --no-install-recommends \
     docker-ce-cli \
+    docker-compose-plugin \
     vim-tiny \
     less \
     && apt-get clean \
